@@ -21,7 +21,7 @@ class MyCareersFutureRequestParams:
         }
 
 
-def get_my_careers_future_url(limit: int, page: int, base_url: str):
+def get_my_careers_future_url(base_url: str, limit: int, page: int):
     return f"{base_url}/v2/search?limit={limit}&page={page}"
 
 
@@ -29,7 +29,7 @@ def get_my_careers_future_response(
     request_params: MyCareersFutureRequestParams,
 ) -> MyCareersFutureResponse:
     url = get_my_careers_future_url(
-        request_params.LIMIT, request_params.page, request_params.BASE_URL
+        request_params.BASE_URL, request_params.LIMIT, request_params.page
     )
     request_body = request_params.get_request_body()
     response = requests.post(url=url, data=request_body)
@@ -70,10 +70,12 @@ def get_my_careers_future_report_data(r: Result) -> MyCareersFutureReportData:
 
 
 scraped_data = scrape_my_careers_future_website()
-truncated_scaped_data = list(map(get_my_careers_future_report_data, scraped_data))
+my_careers_future_report_data = list(map(get_my_careers_future_report_data, scraped_data))
+
+my_careers_future_report_data = list(map(get_my_careers_future_report_data, scraped_data))
 
 from dataclass_csv import DataclassWriter
 
 with open("test.csv", "w") as f:
-    w = DataclassWriter(f, truncated_scaped_data, MyCareersFutureReportData)
+    w = DataclassWriter(f, my_careers_future_report_data, MyCareersFutureReportData)
     w.write()
