@@ -73,7 +73,7 @@ class Result(BaseModel):
     uuid: str
     title: str
     status: Status
-    score: float
+    score: Optional[float] = None
 
 
 class MyCareersFutureResponse(BaseModel):

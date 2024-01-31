@@ -69,10 +69,29 @@ def get_my_careers_future_report_data(r: Result) -> MyCareersFutureReportData:
     )
 
 
-scraped_data = scrape_my_careers_future_website()
-my_careers_future_report_data = list(map(get_my_careers_future_report_data, scraped_data))
+INELIGIBLE_POSITIONS = {"Senior Executive", "Senior Management", "Manager"}
 
-my_careers_future_report_data = list(map(get_my_careers_future_report_data, scraped_data))
+
+def is_relevant_my_careers_future_report_data(
+    report_data: MyCareersFutureReportData, ineligible_positions=INELIGIBLE_POSITIONS
+) -> bool:
+    if report_data.salary_min > 5000:
+        return False
+    if report_data.salary_max < 6500:
+        return False
+    if report_data.position_level in ineligible_positions:
+        return False
+    return True
+
+
+scraped_data = scrape_my_careers_future_website()
+my_careers_future_report_data = [
+    get_my_careers_future_report_data(data)
+    for data in scraped_data
+    if is_relevant_my_careers_future_report_data(
+        get_my_careers_future_report_data(data)
+    )
+]
 
 from dataclass_csv import DataclassWriter
 
